@@ -1,0 +1,157 @@
+body {
+    background: linear-gradient(45deg, #4a12ed, #FFD166);
+}
+
+.title {
+    font-size: 5rem;
+    font-weight: 600;
+    margin-bottom: 2rem;
+}
+
+.input {
+    border-radius: 8px;
+    outline: none;
+    border-color: transparent;
+    font-weight: 400;
+    font-size: 1.2rem;
+    width: 100%;
+    padding: 0.375rem 0.75rem;
+}
+
+.inputlabel {
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: "#1C1B1F";
+}
+
+.btnpr {
+    background-color: #4a12ed;
+    color: #DED8ED;
+    width: 100%;
+    border-radius: 8px;
+    outline: none;
+    border-color: transparent;
+    font-weight: 600;
+    font-size: 1.2rem;
+    padding: 0.375rem 0.75rem;
+}
+
+.btnpr:hover {
+    background-color: #5E38CA;
+    transition: 0.3s;
+}
+
+.error {
+    color: red;
+    font-size: 1rem;
+    /* font-weight: 600; */
+}
+
+
+.lobbiesscreencontainer {
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.lobbiesscreentitle {
+    font-size: 2.5rem;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+
+.createlobby {
+    font-size: 1rem;
+    font-weight: 600;
+    background-color: #4a12ed;
+    /* max-width: 150px; */
+    padding: 12px 16px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #DED8ED;
+    cursor: pointer;
+}
+
+.lobbiescardcontainer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 2rem;
+}
+
+.lobbycardcontainer {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    min-width: 200px;
+    border-radius: 12px;
+    margin-top: 2rem;
+    background-color: #FFD166;
+    padding: 12px;
+    box-sizing: border-box;
+    gap: 6px;
+}
+
+.lobbyname {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+.lobbyplayers {
+    font-size: 1rem;
+    font-weight: 400;
+}
+
+.waiting-text {
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.waiting-text::after {
+    content: 'Waiting';
+    animation: waitingAnimation 2s infinite steps(3);
+}
+
+@keyframes waitingAnimation {
+    0% {
+        content: 'Waiting.';
+    }
+    20% {
+        content: 'Waiting..';
+    }
+    40% {
+        content: 'Waiting...';
+    }
+    60% {
+        content: 'Waiting..';
+    }
+    80% {
+        content: 'Waiting.';
+    }
+    100% {
+        content: 'Waiting';
+    }
+}
+
+.myname {
+    padding: 8px 16px;
+    height: 40px;
+    border-radius: 8px;
+    background-color: #DED8ED;
+    color: black;
+    font-size: 1.2rem;
+    position: absolute;
+    right: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

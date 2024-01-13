@@ -1,0 +1,13 @@
+{
+    "Unexpected_Error": "Váratlan hiba történt!",
+    "Unknown_Error": "Ismeretlen hiba történt!",
+    "Invalid_Cookie": "Érvénytelen süti!",
+    "No_Cookie_Found": "Nem található süti!",
+    "Already_Logged_In": "Már be vagy jelentkezve!",
+    "Missing_Name": "Hiányzó név!",
+    "Invalid_Name_Length": "Érvénytelen név hossz! (3-16)",
+    "Player_Creation_Failed": "Játékos létrehozása sikertelen!",
+    "Not_Logged_In": "Nem vagy bejelentkezve!",
+    "lobbyNotFound": "Nem található lobby!",
+    "playerNotFound": "Nem található játékos!"
+}
