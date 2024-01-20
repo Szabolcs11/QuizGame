@@ -19,4 +19,22 @@ export type LobbyPreviewType = {
 
 export interface LobbyType extends LobbyPreviewType {
     Players: LobbyPlayerType[];
+    CurrentQuestion: QuestionType;
+}
+
+export type QuestionTypes = 'text' | 'image' | 'sound';
+
+export type QuestionType = {
+    ID: number;
+    Text: string;
+    Type: QuestionTypes;
+    OrderNum: number;
+    Answers: AnswerType[];
+    Status: 'unanswered' | "answered"
+}
+
+export type AnswerType = {
+    ID: number;
+    Text: string;
+    IsCorrect: boolean;
 }

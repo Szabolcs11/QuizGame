@@ -24,7 +24,6 @@ function Landing() {
     if (player) {
       updatePlayer();
     }
-    console.log(player);
   };
 
   return (

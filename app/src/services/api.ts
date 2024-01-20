@@ -41,3 +41,18 @@ export const getLobbies = async () => {
         throw error;
     };
 }
+
+export const uploadFile = async (file: File) => {
+    try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const res = await axios.post(ENDPOINTS.FILE_UPLOAD, formData, {withCredentials: true});
+        if (res.data.success) {
+            return res.data.fileurl as string;
+        }
+        return false;
+    } catch (error) {
+        throw error;
+    };
+
+};

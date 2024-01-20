@@ -1,7 +1,5 @@
-const { getLobbyFromKey, joinLobby } = require("../../utils");
-const responses = require("./../../responses/responses.json");
-
-const GLOBALROOM = "GLOBALROOM";
+const { getLobbyFromKey, joinLobby, GLOBALROOM } = require("../../utils");
+const responses = require("../../responses/responses.json");
 
 function handleJoinLobby(socket, io) {
   socket.on("join-lobby", async (LobbyKey, PlayerID, cb) => {
@@ -9,6 +7,7 @@ function handleJoinLobby(socket, io) {
     if (!lobby) return cb({ success: false, message: responses.lobbyNotFound });
 
     let player = await joinLobby(lobby.ID, PlayerID, 0);
+    if (player == "LOBBY_PLAYING") return cb({ success: false, message: responses.lobbyPlaying });
     if (!player) return cb({ success: false, message: responses.playerNotFound });
     lobby.Players.push(player);
 
@@ -17,7 +16,7 @@ function handleJoinLobby(socket, io) {
 
     io.to(LobbyKey).emit("player-joined", player, lobby);
 
-    io.to(GLOBALROOM).emit("update-lobby-players-counter", lobby);
+    io.to(GLOBALROOM).emit("update-lobby", lobby);
 
     socket.join(LobbyKey);
 

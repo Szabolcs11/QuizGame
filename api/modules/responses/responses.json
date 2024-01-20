@@ -9,5 +9,9 @@
     "Player_Creation_Failed": "Játékos létrehozása sikertelen!",
     "Not_Logged_In": "Nem vagy bejelentkezve!",
     "lobbyNotFound": "Nem található lobby!",
-    "playerNotFound": "Nem található játékos!"
+    "playerNotFound": "Nem található játékos!",
+    "lobbyPlaying": "A lobby már játékban van!",
+    "SuccessfullLobbyStart": "A játék sikeresen elindult!",
+    "NotEnoughPlayers": "Nincs elég játékos a játék elindításához!",
+    "NoQuestions": "Nincsenek kérdések!"
 }

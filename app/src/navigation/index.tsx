@@ -7,6 +7,9 @@ import { PlayerType } from "../types";
 import CreateLobby from "../Pages/CreateLobby/CreateLobby";
 import { PATHS } from "../constans";
 import Lobby from "../Pages/Lobby/Lobby";
+import EditLobby from "../Pages/EditLobby/EditLobby";
+import Game from "../Pages/Game/Game";
+import GameAdmin from "../Pages/GameAdmin/GameAdmin";
 
 export let navigateto: any;
 export let updatePlayer: () => void;
@@ -46,8 +49,11 @@ function index() {
   return (
     <Routes>
       <Route path={PATHS.LOBBIES} element={<Lobbies player={player} />} />
-      <Route path={PATHS.CREATE_LOBBY} element={<CreateLobby />} />
+      <Route path={PATHS.CREATE_LOBBY} element={<CreateLobby player={player} />} />
       <Route path={PATHS.LOBBY + "/:key"} element={<Lobby player={player} />} />
+      <Route path={PATHS.LOBBY + "/:key/edit"} element={<EditLobby playerprop={player} />} />
+      <Route path={PATHS.GAME + "/:key"} element={<Game player={player} />} />
+      <Route path={PATHS.GAME_ADMIN + "/:key"} element={<GameAdmin player={player} />} />
       <Route path="*" element={<Navigate to={PATHS.LOBBIES} />} />
     </Routes>
   );

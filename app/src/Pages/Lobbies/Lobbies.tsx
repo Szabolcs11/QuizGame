@@ -32,15 +32,28 @@ function Lobbies({ player }: LobbiesProps) {
     navigateto(PATHS.CREATE_LOBBY);
   };
 
+  const lobbyCreated = async (lobby: LobbyType) => {
+    setLobbies((prev) => [...prev, lobby]);
+  };
+
   useEffect(() => {
-    socket.on(SOCKET_EVENTS.UPDATE_LOBBY_PLAYERS_COUNTER, (data: any) => {
+    socket.on(SOCKET_EVENTS.UPDATE_LOBBY, (data: any) => {
+      console.log(data);
       setLobbies((prev) =>
-        prev.map((lobby) => (lobby.ID === data.ID ? { ...lobby, PlayersCounter: data.Players.length } : lobby))
+        prev.map((lobby) =>
+          lobby.ID === data.ID ? { ...lobby, PlayersCounter: data.Players.length, Status: data.Status } : lobby
+        )
       );
     });
 
+    socket.on(SOCKET_EVENTS.ON_LOBBY_CREATED, (data: any) => {
+      let lobby = { ...data, PlayersCounter: data.Players.length };
+      lobbyCreated(lobby);
+    });
+
     return () => {
-      socket.off(SOCKET_EVENTS.UPDATE_LOBBY_PLAYERS_COUNTER);
+      socket.off(SOCKET_EVENTS.UPDATE_LOBBY);
+      socket.off(SOCKET_EVENTS.ON_LOBBY_CREATED);
     };
   }, []);
 
