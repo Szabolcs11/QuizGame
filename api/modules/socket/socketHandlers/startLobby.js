@@ -4,6 +4,7 @@ const {
   GLOBALROOM,
   changeCurrentQuestionID,
   getFirstQuessionID,
+  createScoreboard,
 } = require("../../utils");
 const responses = require("./../../responses/responses.json");
 
@@ -19,6 +20,9 @@ function startLobby(socket, io) {
     if (!QuestionID) return cb({ success: false, message: responses.NoQuestions });
     const updated = await changeCurrentQuestionID(updatedLobby.ID, QuestionID);
     if (!updated) return cb({ success: false, message: responses.lobbyNotFound });
+
+    const scoreboard = await createScoreboard(updatedLobby);
+    if (!scoreboard) return cb({ success: false, message: responses.scoreboardError });
 
     io.to(GLOBALROOM).emit("update-lobby", updatedLobby);
     io.to(lobby.LobbyKey).emit("lobby-started", updatedLobby);

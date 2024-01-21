@@ -87,29 +87,36 @@ function GameAdmin({ player }: GameAdminProps) {
   }, [socket]);
 
   const handleEndQuestion = () => {
-    // socket.emit(SOCKET_EVENTS.EMIT_END_QUESTION, lobby!.ID, (cb: any) => {
-    //   if (cb.success) {
-    //     setLobby(cb.lobby);
-    //   } else {
-    //     showToast("Error", cb.message);
-    //   }
-    // });
+    socket.emit(SOCKET_EVENTS.EMIT_END_QUESTION, player.ID, lobby!.ID, (cb: any) => {
+      console.log(cb);
+      if (cb.success) {
+        // setLobby(cb.lobby);
+      } else {
+        showToast("Error", cb.message);
+      }
+    });
   };
 
   const handleShowScoreboard = () => {
-    // socket.emit(SOCKET_EVENTS.EMIT_SHOW_SCOREBOARD, lobby!.ID, (cb: any) => {
-    //   if (cb.success) {
-    //     setLobby(cb.lobby);
-    //   } else {
-    //     showToast("Error", cb.message);
-    //   }
-    // });
+    socket.emit(SOCKET_EVENTS.EMIT_SHOW_SCOREBOARD, lobby!.ID, (cb: any) => {
+      if (cb.success) {
+        showToast("Success", cb.message);
+      } else {
+        showToast("Error", cb.message);
+      }
+    });
   };
 
+  // End Question, mean the server is calculating the score
+  // ShowScoreboard, we put a scoreboard on the screen
   const handleNextQuestion = () => {
     socket.emit(SOCKET_EVENTS.EMIT_NEXT_QUESTION, player.ID, lobby!.ID, (cb: any) => {
       console.log(cb);
       if (cb.success) {
+        let temp = questions;
+        temp.find((q) => q.ID === lobby?.CurrentQuestion.ID)!.Status = "answered";
+        console.log(temp);
+        setQuestions(temp);
         setLobby((prev) => ({ ...prev!, CurrentQuestion: cb.currentQuestion }));
       } else {
         showToast("Error", cb.message);
@@ -128,7 +135,7 @@ function GameAdmin({ player }: GameAdminProps) {
   return (
     <div>
       <p>GameAdmin</p>
-      <Players players={players!} />
+      <Players players={players!} myid={player.ID} />
       <Questions Questions={questions} CurrentQuestionID={lobby!.CurrentQuestion.ID} Answers={answers} />
       <Controls
         handleEndQuestion={() => handleEndQuestion()}

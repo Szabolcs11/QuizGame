@@ -189,7 +189,9 @@ async function addQuestion(Question, LobbyID) {
   Question.Answers.forEach((e) => {
     answers.push([e.Text, res.insertId, e.IsCorrect]);
   });
-  const [res2] = await (await conn).query("INSERT INTO answers (Text, QuestionID, IsCorrect) VALUES ?", [answers]);
+  const [res2] = await (
+    await conn
+  ).query("INSERT INTO questions_answers (Text, QuestionID, IsCorrect) VALUES ?", [answers]);
   if (res2.affectedRows == 0) return false;
   return await getLobbyQuestion(LobbyID, res.insertId);
 }
@@ -302,6 +304,89 @@ async function handleNextQuestion(LobbyID) {
   return nextQuestion;
 }
 
+async function getQuestionIsAnswered(QuestionID) {
+  const [res] = await (await conn).query("SELECT * FROM questions WHERE ID=?;", [QuestionID]);
+  if (res.length == 0) return false;
+  if (res[0].Status == "answered") return true;
+  return false;
+}
+
+async function updateQuestionStatus(QuestionID, Status) {
+  const [res] = await (await conn).query("UPDATE questions SET Status=? WHERE ID=?;", [Status, QuestionID]);
+  if (res.affectedRows == 0) return false;
+  return true;
+}
+
+async function calculatePoints(QuestionID, LobbyID) {
+  const [result] = await (
+    await conn
+  ).query("SELECT * FROM questions_answers WHERE QuestionID=? AND IsCorrect=1;", [QuestionID]);
+  if (result.length == 0) return false;
+  const [res] = await (
+    await conn
+  ).query(
+    "SELECT players.ID as PlayerID, players.Name as PlayerName, questions_answers.ID as AnswerID, questions_answers.Text as AnswerText, questions_answers.IsCorrect, players_answers.Date FROM players_answers INNER JOIN questions_answers ON questions_answers.ID = players_answers.AnswerID INNER JOIN players ON players.ID = players_answers.PlayerID WHERE players_answers.QuestionID=?",
+    [QuestionID]
+  );
+  if (res.length == 0) return false;
+
+  let correctAnswers = [];
+  res.forEach((e) => {
+    if (e.IsCorrect == 1) correctAnswers.push(e);
+  });
+
+  correctAnswers.sort((a, b) => {
+    return a.Date - b.Date;
+  });
+  let AnswersWithScores = [];
+  res.forEach((e) => {
+    AnswersWithScores.push({ ...e, Score: 0 });
+  });
+
+  // Scores calculation logic 100, 80, 60, 50
+  correctAnswers.forEach((e, index) => {
+    AnswersWithScores.forEach((e2) => {
+      if (e.PlayerID == e2.PlayerID) {
+        e2.Score = index < 3 ? 100 - index * 20 : 50;
+      }
+    });
+  });
+
+  const updatedPoints = await Promise.all(
+    AnswersWithScores.map(async (e) => {
+      const [res] = await (
+        await conn
+      ).query("UPDATE scores SET Score=Score+? WHERE LobbyID=? AND PlayerID=?;", [e.Score, LobbyID, e.PlayerID]);
+      if (res.affectedRows == 0) return false;
+      return true;
+    })
+  );
+  if (updatedPoints.includes(false)) return false;
+
+  return { AnswersWithScores, correctAnswer: result[0] };
+}
+
+async function createScoreboard(lobby) {
+  lobby.Players.map(async (e) => {
+    if (e.IsAdmin == 1) return;
+    const [res] = await (
+      await conn
+    ).query("INSERT INTO scores (LobbyID, PlayerID, Score) VALUES (?, ?, ?);", [lobby.ID, e.ID, 0]);
+    if (res.affectedRows == 0) return false;
+  });
+  return true;
+}
+
+async function getScoreboard(LobbyID) {
+  const [res] = await (
+    await conn
+  ).query(
+    "SELECT scores.Score, players.Name, players.ID FROM scores INNER JOIN players ON players.ID = scores.PlayerID WHERE scores.LobbyID=? ORDER BY scores.Score DESC;",
+    [LobbyID]
+  );
+  if (res.length == 0) return false;
+  return res;
+}
 module.exports = {
   returnError,
   getUserByToken,
@@ -326,4 +411,9 @@ module.exports = {
   getLobbyFromID,
   isPlayerAnswered,
   handleNextQuestion,
+  getQuestionIsAnswered,
+  updateQuestionStatus,
+  calculatePoints,
+  createScoreboard,
+  getScoreboard,
 };

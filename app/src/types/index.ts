@@ -38,3 +38,16 @@ export type AnswerType = {
     Text: string;
     IsCorrect: boolean;
 }
+
+export type PlayerAnswers = {
+    PlayerID: number;
+    PlayerName: string;
+    AnswerID: number;
+    AnswerText: string;
+};
+
+export type ScoreboardPlayerType = {
+    ID: number;
+    Name: string;
+    Score: number;
+}

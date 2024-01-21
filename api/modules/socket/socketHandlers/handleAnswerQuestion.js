@@ -1,4 +1,4 @@
-const { answerQuestion, getLobbyFromID, isPlayerAnswered } = require("../../utils");
+const { answerQuestion, getLobbyFromID, isPlayerAnswered, getQuestionIsAnswered } = require("../../utils");
 
 function handleAnswerQuestion(socket) {
   socket.on("answer-question", async (lobbyID, PlayerID, QuestionID, AnswerID, cb) => {
@@ -15,9 +15,14 @@ function handleAnswerQuestion(socket) {
       return cb({ success: false, message: "Player ID is required" });
     }
 
+    const isQuestionAnswered = await getQuestionIsAnswered(QuestionID);
+    if (isQuestionAnswered) {
+      return cb({ success: false, message: "A kérdés már nem megválaszolható!" });
+    }
+
     const IsAnswered = await isPlayerAnswered(PlayerID, QuestionID);
     if (IsAnswered) {
-      return cb({ success: false, message: "You already answered this question" });
+      return cb({ success: false, message: "Már válaszolt a kérdésre!" });
     }
 
     const lobby = await getLobbyFromID(lobbyID);

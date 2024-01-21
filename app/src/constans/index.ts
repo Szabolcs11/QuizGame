@@ -34,4 +34,8 @@ export const SOCKET_EVENTS = {
     ON_ANSWERED_QUESTION: 'answered-question',
     EMIT_NEXT_QUESTION: 'next-question',
     ON_CHANGE_QUESTION: 'change-question',
+    EMIT_END_QUESTION: 'end-question',
+    ON_QUESTION_ENDED: 'question-ended',
+    EMIT_SHOW_SCOREBOARD: 'show-scoreboard',
+    ON_SHOW_SCOREBOARD: 'show-scoreboard'
 };

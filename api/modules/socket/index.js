@@ -12,6 +12,8 @@ const handlejoinOnGoingGame = require("./socketHandlers/handleJoinOnGoingGame");
 const handleAdminJoin = require("./socketHandlers/handleAdminJoin");
 const handleAnswerQuestion = require("./socketHandlers/handleAnswerQuestion");
 const nextQuestion = require("./socketHandlers/nextQuestion");
+const endQuestion = require("./socketHandlers/endQuestion");
+const showScoreboard = require("./socketHandlers/showScoreboard");
 
 function initializeSocket(server) {
   const io = socketIO(server, { cors: { origin: "*" } });
@@ -44,6 +46,8 @@ function initializeSocket(server) {
     handleAdminJoin(socket, io);
     handleAnswerQuestion(socket, io);
     nextQuestion(socket, io);
+    endQuestion(socket, io);
+    showScoreboard(socket, io);
   });
 
   return io;
