@@ -30,7 +30,8 @@ export type QuestionType = {
     Type: QuestionTypes;
     OrderNum: number;
     Answers: AnswerType[];
-    Status: 'unanswered' | "answered"
+    Status: 'unanswered' | "answered";
+    AttachmentURL?: string;
 }
 
 export type AnswerType = {
@@ -50,4 +51,5 @@ export type ScoreboardPlayerType = {
     ID: number;
     Name: string;
     Score: number;
+    PointsAdded?: number;
 }

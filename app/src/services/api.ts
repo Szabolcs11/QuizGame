@@ -48,7 +48,7 @@ export const uploadFile = async (file: File) => {
         formData.append('file', file);
         const res = await axios.post(ENDPOINTS.FILE_UPLOAD, formData, {withCredentials: true});
         if (res.data.success) {
-            return res.data.fileurl as string;
+            return res.data.filename as string;
         }
         return false;
     } catch (error) {

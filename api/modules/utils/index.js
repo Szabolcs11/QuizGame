@@ -180,6 +180,7 @@ async function addQuestion(Question, LobbyID) {
     Text: Question.Text,
     Type: Question.Type,
     LobbyID: LobbyID,
+    AttachmentURL: Question?.AttachmentURL,
     OrderNum: Question.OrderNum,
   };
   const [res] = await (await conn).query("INSERT INTO questions SET ?", [info]);

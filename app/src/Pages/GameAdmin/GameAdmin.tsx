@@ -6,11 +6,8 @@ import { socket } from "../../services/socket";
 import { LobbyPlayerType, LobbyType, PlayerType, QuestionType } from "../../types";
 import { showToast } from "../../utils";
 import Players from "../Game/Components/Players";
-import Questions from "./Components/Questions";
-import Scoreboard from "../../assets/svgs/Scoreboard";
-import ArrowRight from "../../assets/svgs/ArrowRight";
-import Pause from "../../assets/svgs/Pause";
 import Controls from "./Components/Controls";
+import Questions from "./Components/Questions";
 
 type GameAdminProps = {
   player: PlayerType;
@@ -23,6 +20,11 @@ type AnswersType = {
   AnswerID: number;
 };
 
+type PointsScored = {
+  PlayerID: number;
+  Points: number;
+};
+
 function GameAdmin({ player }: GameAdminProps) {
   const { key } = useParams();
   const [lobby, setLobby] = useState<LobbyType | null>(null);
@@ -30,8 +32,7 @@ function GameAdmin({ player }: GameAdminProps) {
   const [isLoading, setIsLoading] = useState(true);
   const [answers, setAnswers] = useState<AnswersType[]>([]);
   const [players, setPlayers] = useState<LobbyPlayerType[]>([]);
-  // let map = new Map();
-  // map.set(1, { PlayerID: 1, PlayerName: "test", QuestionID: 1, AnswerID: 1 });
+  const [pointsScored, setPointsScored] = useState<PointsScored[]>([]);
 
   const ref = useRef<LobbyPlayerType[]>();
   ref.current = players;
@@ -57,7 +58,6 @@ function GameAdmin({ player }: GameAdminProps) {
   useEffect(() => {
     const handlePlayerJoined = (player: LobbyPlayerType, lobby: LobbyType) => {
       console.log("join", player.Name);
-      // setLobby((prev) => ({ ...prev!, Players: lobby.Players }));
       console.log(lobby.Players);
       setPlayers(lobby.Players);
     };
@@ -65,7 +65,6 @@ function GameAdmin({ player }: GameAdminProps) {
     const handlePlayerLeft = (player: LobbyPlayerType, lobby: LobbyType) => {
       console.log("left", player.Name);
       console.log(lobby.Players);
-      // setLobby((prev) => ({ ...prev!, Players: lobby.Players }));
       setPlayers(lobby.Players);
     };
 
@@ -88,9 +87,8 @@ function GameAdmin({ player }: GameAdminProps) {
 
   const handleEndQuestion = () => {
     socket.emit(SOCKET_EVENTS.EMIT_END_QUESTION, player.ID, lobby!.ID, (cb: any) => {
-      console.log(cb);
       if (cb.success) {
-        // setLobby(cb.lobby);
+        setPointsScored(cb.PlayersScored);
       } else {
         showToast("Error", cb.message);
       }
@@ -98,7 +96,7 @@ function GameAdmin({ player }: GameAdminProps) {
   };
 
   const handleShowScoreboard = () => {
-    socket.emit(SOCKET_EVENTS.EMIT_SHOW_SCOREBOARD, lobby!.ID, (cb: any) => {
+    socket.emit(SOCKET_EVENTS.EMIT_SHOW_SCOREBOARD, lobby!.ID, pointsScored, (cb: any) => {
       if (cb.success) {
         showToast("Success", cb.message);
       } else {
@@ -111,11 +109,10 @@ function GameAdmin({ player }: GameAdminProps) {
   // ShowScoreboard, we put a scoreboard on the screen
   const handleNextQuestion = () => {
     socket.emit(SOCKET_EVENTS.EMIT_NEXT_QUESTION, player.ID, lobby!.ID, (cb: any) => {
-      console.log(cb);
       if (cb.success) {
+        setPointsScored([]);
         let temp = questions;
         temp.find((q) => q.ID === lobby?.CurrentQuestion.ID)!.Status = "answered";
-        console.log(temp);
         setQuestions(temp);
         setLobby((prev) => ({ ...prev!, CurrentQuestion: cb.currentQuestion }));
       } else {

@@ -34,6 +34,7 @@ function endQuestion(socket, io) {
     if (!AnswersWithScores) return cb({ success: false, message: "Error calculating points" });
 
     let PlayerAnswers = [];
+    let PlayersScored = [];
     AnswersWithScores.map((answer) => {
       PlayerAnswers.push({
         PlayerID: answer.PlayerID,
@@ -41,10 +42,15 @@ function endQuestion(socket, io) {
         AnswerID: answer.AnswerID,
         AnswerText: answer.AnswerText,
       });
+      PlayersScored.push({
+        PlayerID: answer.PlayerID,
+        PlayerName: answer.PlayerName,
+        Score: answer.Score,
+      });
     });
 
     io.to(lobby.LobbyKey).emit("question-ended", PlayerAnswers, correctAnswer);
-    cb({ success: true });
+    cb({ success: true, PlayersScored });
   });
 }
 

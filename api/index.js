@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/auth", require("./routes/auth/index"));
 app.use("/lobby", require("./routes/lobby/index"));
-app.use("/file-upload", require("./routes/lobby/index"));
+app.use("/file", require("./routes/file/index"));
 
 app.use((req, res) => {
   res.send("404 Not Found");

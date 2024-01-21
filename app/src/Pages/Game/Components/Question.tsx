@@ -1,4 +1,5 @@
-import React from "react";
+import { Fragment } from "react";
+import { ENDPOINTS } from "../../../constans";
 import { PlayerAnswers, QuestionType } from "../../../types";
 
 interface QuestionProps {
@@ -22,9 +23,14 @@ function Question({
     <div className="questioncontainer">
       <div className="question">
         <div className="question-title">{Question?.Text}</div>
-        <div className="question-answers">
+        <div className="question-image">
+          {Question?.AttachmentURL && (
+            <img className="" src={ENDPOINTS.GET_FILE + Question?.AttachmentURL} alt="Question image" />
+          )}
+        </div>
+        <div className="question-answers" style={{ marginTop: Question?.AttachmentURL ? 16 : 128 }}>
           {Question?.Answers.map((answer) => (
-            <>
+            <Fragment key={answer.ID}>
               <div
                 onClick={() => handleAnswer(answer.ID)}
                 key={answer.ID}
@@ -39,7 +45,7 @@ function Question({
                   <>{playeranswer.AnswerID == answer.ID && <div>{playeranswer.PlayerName}</div>}</>
                 ))}
               </div>
-            </>
+            </Fragment>
           ))}
         </div>
       </div>

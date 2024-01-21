@@ -7,6 +7,7 @@ import { LobbyType, PlayerAnswers, PlayerType, QuestionType, ScoreboardPlayerTyp
 import { showToast } from "../../utils";
 import Players from "./Components/Players";
 import Question from "./Components/Question";
+import Scoreboard from "./Components/Scoreboard";
 
 type GameProps = {
   player: PlayerType;
@@ -79,21 +80,7 @@ function Game({ player }: GameProps) {
   }
 
   if (scoreboard.length > 0) {
-    return (
-      <div className="scoreboardcontainer">
-        <div className="subtitle">Pontok</div>
-        <div className="scorescontainer">
-          {scoreboard.map((e) => {
-            return (
-              <div className="score" key={e.ID}>
-                <div>{e.Name}</div>
-                <div>{e.Score}</div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
-    );
+    return <Scoreboard scoreboard={scoreboard} />;
   }
 
   const handleAnswer = (answerID: number) => {

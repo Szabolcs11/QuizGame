@@ -4,7 +4,8 @@ export const ENDPOINTS = {
     AUTHENTICATE: API_URL + 'auth/authenticate',
     REGISTER: API_URL + 'auth/register',
     LOBBIES: API_URL + 'lobby/lobbies',
-    FILE_UPLOAD: API_URL + 'file-upload',
+    FILE_UPLOAD: API_URL + 'file/upload',
+    GET_FILE: API_URL + 'file/',
 };
 
 export const PATHS = {

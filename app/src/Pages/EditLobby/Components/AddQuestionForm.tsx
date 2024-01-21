@@ -25,16 +25,33 @@ function AddQuestionForm({ handleAttachmentChange, handleAddQuestion, attachment
     handleSubmit,
     watch,
     formState: { errors },
+    reset,
   } = useForm<FormData>({
     resolver: yupResolver(addQuestionSchema),
   });
+
+  const fileRef = React.useRef<HTMLInputElement>(null);
+
+  const handleSubmitQuestion = async (data: FormData) => {
+    reset();
+    if (fileRef.current) {
+      const fileInput = fileRef.current as HTMLInputElement;
+      if (fileInput) {
+        fileInput.value = "";
+        handleAttachmentChange({
+          target: fileInput,
+        } as React.ChangeEvent<HTMLInputElement>);
+      }
+    }
+    await handleAddQuestion(data);
+  };
   return (
     <div className="addquestioncontainer">
       <div className="subtitle" style={{ marginTop: 8 }}>
         Add question
       </div>
       <div>
-        <form onSubmit={handleSubmit(handleAddQuestion)} className="formcontainer">
+        <form onSubmit={handleSubmit(handleSubmitQuestion)} className="formcontainer">
           <Controller
             name="question"
             control={control}
@@ -98,7 +115,7 @@ function AddQuestionForm({ handleAttachmentChange, handleAddQuestion, attachment
               </select>
             )}
           />
-          <input type="file" onChange={handleAttachmentChange} accept=".png, .jpg, .jpeg" />
+          <input type="file" ref={fileRef} onChange={handleAttachmentChange} accept=".png, .jpg, .jpeg" />
           <input type="submit" placeholder="Kérdés hozzáadása" className="btnpr" />
         </form>
       </div>

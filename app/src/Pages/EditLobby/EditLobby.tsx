@@ -53,16 +53,17 @@ function EditLobby({ playerprop }: EditLobbyProps) {
   }, []);
 
   const handleAttachmentChange: React.ChangeEventHandler<HTMLInputElement> = async (e) => {
-    if (e.target.files) {
-      let res = await uploadFile(e.target.files[0]);
+    if (e.target.files?.length! > 0) {
+      let res = await uploadFile(e.target.files![0]);
       if (res) {
         setAttachmentUrl(res);
       }
+    } else {
+      setAttachmentUrl("");
     }
   };
 
   const handleAddQuestion = async (data: FormData) => {
-    console.log(data);
     if (data.questiontype == "none") {
       showToast("Error", "Kérdés típus megadása kötelező");
       return;
@@ -86,6 +87,7 @@ function EditLobby({ playerprop }: EditLobbyProps) {
       Text: data.question,
       Type: data.questiontype as QuestionTypes,
       OrderNum: questions.length + 1,
+      AttachmentURL: attachmentUrl,
       Answers: answers as AnswerType[],
     };
     socket.emit(SOCKET_EVENTS.EMIT_ADD_QUESTION, lobby?.ID, question, (cb: any) => {
