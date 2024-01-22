@@ -47,7 +47,6 @@ function Lobby({ player }: LobbyProps) {
     };
 
     const lobbyStarted = (lobby: LobbyType) => {
-      console.log("LOBBY STARTED", lobby);
       navigateto(PATHS.GAME + "/" + lobby.LobbyKey);
     };
 
@@ -57,7 +56,7 @@ function Lobby({ player }: LobbyProps) {
 
     return () => {
       if (loadedRef.current) {
-        socket.emit(SOCKET_EVENTS.PLAYER_LEFT_LISTENER, key, player.ID, (cb: any) => {});
+        socket.emit(SOCKET_EVENTS.PLAYER_LEFT_LISTENER, key, player.ID, (_: any) => {});
       }
 
       socket.off(SOCKET_EVENTS.PLAYER_JOINED, handlePlayerJoined);

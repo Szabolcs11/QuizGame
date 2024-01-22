@@ -29,17 +29,16 @@ interface FormData {
 export let handleDeleteQuestion: (QuestionID: number) => void;
 
 function EditLobby({ playerprop }: EditLobbyProps) {
-  console.log(playerprop);
   const { key } = useParams();
   const [player, setPlayer] = useState<LobbyPlayerType>();
   const [lobby, setLobby] = useState<LobbyType>();
   const [isLoading, setIsLoading] = useState(true);
   const [questions, setQuestions] = useState<QuestionType[]>([]);
   const [attachmentUrl, setAttachmentUrl] = useState<string>("");
+  const [isUploading, setIsUploading] = useState(false);
 
   useEffect(() => {
     socket.emit(SOCKET_EVENTS.EMIT_JOIN_EDIT_LOBBY, playerprop, key, (cb: any) => {
-      console.log(cb);
       if (cb.success) {
         let lobby = cb.lobby as LobbyType;
         lobby.Players = sortLobbyPlayersByIsAdmin(lobby);
@@ -57,9 +56,14 @@ function EditLobby({ playerprop }: EditLobbyProps) {
 
   const handleAttachmentChange: React.ChangeEventHandler<HTMLInputElement> = async (e) => {
     if (e.target.files?.length! > 0) {
+      setIsUploading(true);
       let res = await uploadFile(e.target.files![0]);
       if (res) {
         setAttachmentUrl(res);
+        setIsUploading(false);
+      } else {
+        showToast("Error", "Hiba történt a kép feltöltése közben");
+        setIsUploading(false);
       }
     } else {
       setAttachmentUrl("");
@@ -67,6 +71,10 @@ function EditLobby({ playerprop }: EditLobbyProps) {
   };
 
   const handleAddQuestion = async (data: FormData) => {
+    if (isUploading) {
+      showToast("Error", "Kép feltöltése folyamatban");
+      return;
+    }
     if (data.questiontype == "none") {
       showToast("Error", "Kérdés típus megadása kötelező");
       return;
@@ -120,8 +128,7 @@ function EditLobby({ playerprop }: EditLobbyProps) {
     socket.on(SOCKET_EVENTS.PLAYER_LEFT_LISTENER, handlePlayerLeft);
 
     return () => {
-      console.log(playerprop);
-      socket.emit(SOCKET_EVENTS.PLAYER_LEFT_LISTENER, key, playerprop!.ID, (cb: any) => {});
+      socket.emit(SOCKET_EVENTS.PLAYER_LEFT_LISTENER, key, playerprop!.ID, (_: any) => {});
       socket.off(SOCKET_EVENTS.PLAYER_JOINED, handlePlayerJoined);
       socket.off(SOCKET_EVENTS.PLAYER_LEFT_LISTENER, handlePlayerLeft);
     };
@@ -152,11 +159,8 @@ function EditLobby({ playerprop }: EditLobbyProps) {
   };
 
   const handleSartGame = () => {
-    console.log("0");
     socket.emit(SOCKET_EVENTS.EMIT_START_LOBBY, lobby?.LobbyKey, (cb: any) => {
-      console.log("1");
       if (cb.success) {
-        console.log("2");
         showToast("Success", cb.message);
         navigateto(PATHS.GAME_ADMIN + "/" + lobby?.LobbyKey);
       } else {
@@ -179,7 +183,7 @@ function EditLobby({ playerprop }: EditLobbyProps) {
         <AddQuestionForm
           handleAttachmentChange={handleAttachmentChange}
           handleAddQuestion={handleAddQuestion}
-          attachmentUrl={attachmentUrl}
+          isUploading={isUploading}
         />
         <DndProvider backend={HTML5Backend}>
           <QuestionsList questions={questions} onQuestionOrderChange={handleQuestionOrderChange} />

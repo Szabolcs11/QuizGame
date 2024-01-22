@@ -38,7 +38,6 @@ function Lobbies({ player }: LobbiesProps) {
 
   useEffect(() => {
     socket.on(SOCKET_EVENTS.UPDATE_LOBBY, (data: any) => {
-      console.log(data);
       setLobbies((prev) =>
         prev.map((lobby) =>
           lobby.ID === data.ID ? { ...lobby, PlayersCounter: data.Players.length, Status: data.Status } : lobby

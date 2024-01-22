@@ -39,7 +39,6 @@ function GameAdmin({ player }: GameAdminProps) {
 
   useEffect(() => {
     socket.emit(SOCKET_EVENTS.EMIT_JOIN_GAME_ADMIN, player.ID, key, (cb: any) => {
-      console.log(cb);
       if (cb.success) {
         setLobby(cb.lobby);
         setPlayers(cb.lobby.Players);
@@ -51,7 +50,7 @@ function GameAdmin({ player }: GameAdminProps) {
       setIsLoading(false);
     });
     return () => {
-      socket.emit(SOCKET_EVENTS.PLAYER_LEFT_LISTENER, key, player.ID, (cb: any) => {});
+      socket.emit(SOCKET_EVENTS.PLAYER_LEFT_LISTENER, key, player.ID, (_: any) => {});
     };
   }, []);
 

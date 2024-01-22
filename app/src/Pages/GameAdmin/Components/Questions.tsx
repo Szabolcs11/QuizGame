@@ -16,7 +16,6 @@ type AnswersType = {
 };
 
 function Questions({ Questions, CurrentQuestionID, Answers }: QuestionProps) {
-  console.log(Answers);
   return (
     <div className="apquestionscontainer">
       {Questions.map((question) => (

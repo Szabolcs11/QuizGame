@@ -1,12 +1,12 @@
 import { yupResolver } from "@hookform/resolvers/yup";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
-import { addQuestionSchema } from "../../../utils";
+import { addQuestionSchema, showToast } from "../../../utils";
 
 interface AddQuestionFormProps {
   handleAttachmentChange: React.ChangeEventHandler<HTMLInputElement>;
   handleAddQuestion: (data: any) => void;
-  attachmentUrl: string;
+  isUploading: boolean;
 }
 
 interface FormData {
@@ -19,7 +19,7 @@ interface FormData {
   correctanswer: string;
 }
 
-function AddQuestionForm({ handleAttachmentChange, handleAddQuestion, attachmentUrl }: AddQuestionFormProps) {
+function AddQuestionForm({ handleAttachmentChange, handleAddQuestion, isUploading }: AddQuestionFormProps) {
   const {
     control,
     handleSubmit,
@@ -33,6 +33,10 @@ function AddQuestionForm({ handleAttachmentChange, handleAddQuestion, attachment
   const fileRef = React.useRef<HTMLInputElement>(null);
 
   const handleSubmitQuestion = async (data: FormData) => {
+    if (isUploading) {
+      showToast("Error", "Kép feltöltése folyamatban");
+      return;
+    }
     reset();
     if (fileRef.current) {
       const fileInput = fileRef.current as HTMLInputElement;

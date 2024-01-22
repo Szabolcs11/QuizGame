@@ -1,5 +1,3 @@
-import React from "react";
-
 function Waiting() {
   return <div className="waiting-text"></div>;
 }

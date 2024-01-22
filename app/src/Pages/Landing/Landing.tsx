@@ -1,10 +1,9 @@
-import React from "react";
-import { LandingStyle } from "./LandingStyle";
-import { authschema } from "../../utils";
-import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { registerPlayer } from "../../services/api";
+import { Controller, useForm } from "react-hook-form";
 import { updatePlayer } from "../../navigation";
+import { registerPlayer } from "../../services/api";
+import { authschema } from "../../utils";
+import { LandingStyle } from "./LandingStyle";
 
 interface FormData {
   name: string;

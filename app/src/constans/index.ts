@@ -1,4 +1,4 @@
-export const API_URL = 'http://localhost:2004/'
+export const API_URL = import.meta.env.VITE_API_URL as string
 
 export const ENDPOINTS = {
     AUTHENTICATE: API_URL + 'auth/authenticate',

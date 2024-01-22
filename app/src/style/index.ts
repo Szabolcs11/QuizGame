@@ -1,7 +1,3 @@
-type StyleType = {
-    btnpr: React.CSSProperties;
-};
-
 export const palette = {
     primary: "#4a12ed",
     secondary: "#FFD166",

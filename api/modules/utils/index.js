@@ -13,7 +13,7 @@ async function getUserByToken(Token) {
   const [res] = await (
     await conn
   ).query(
-    "SELECT Players.ID, Players.Name FROM Players INNER JOIN sessions ON sessions.PlayerID = players.ID AND sessions.Token=?;",
+    "SELECT players.ID, players.Name FROM players INNER JOIN sessions ON sessions.PlayerID = players.ID AND sessions.Token=?;",
     [Token]
   );
   if (res.length == 0) return false;
@@ -140,10 +140,10 @@ async function createLobby(PlayerID, LobbyName) {
     await conn
   ).query("INSERT INTO lobbies (Name, LobbyKey, LobbyOwnerID) VALUES (?, ?, ?);", [LobbyName, LobbyKey, PlayerID]);
   if (res.affectedRows == 0) return false;
-  const [res2] = await (
-    await conn
-  ).query("INSERT INTO lobby_members (LobbyID, PlayerID, IsAdmin) VALUES (?, ?, ?);", [res.insertId, PlayerID, 1]);
-  if (res2.affectedRows == 0) return false;
+  // const [res2] = await (
+  //   await conn
+  // ).query("INSERT INTO lobby_members (LobbyID, PlayerID, IsAdmin) VALUES (?, ?, ?);", [res.insertId, PlayerID, 1]);
+  // if (res2.affectedRows == 0) return false;
   const [res3] = await (await conn).query("SELECT * FROM lobbies WHERE ID=?;", [res.insertId]);
   if (res3.length == 0) return false;
   await Promise.all(

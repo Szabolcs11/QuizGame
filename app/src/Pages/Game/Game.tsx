@@ -24,7 +24,6 @@ function Game({ player }: GameProps) {
 
   useEffect(() => {
     socket.emit(SOCKET_EVENTS.EMIT_JOIN_GAME, player.ID, key, (cb: any) => {
-      console.log(cb.lobby);
       if (cb.success) {
         setCurrentQuestion(cb.lobby.CurrentQuestion);
         setLobby(cb.lobby);
@@ -49,7 +48,6 @@ function Game({ player }: GameProps) {
 
     socket.on(SOCKET_EVENTS.ON_CHANGE_QUESTION, (nextQuestion: QuestionType) => {
       setScoreboard([]);
-      console.log("next question", nextQuestion);
       setCorrectAnswerID(0);
       setSelectedAnswerID(0);
       setPlayerAnswers([]);
@@ -58,7 +56,6 @@ function Game({ player }: GameProps) {
     });
 
     socket.on(SOCKET_EVENTS.ON_SHOW_SCOREBOARD, (Scoreboard: ScoreboardPlayerType[]) => {
-      console.log("scoreboard", Scoreboard);
       setScoreboard(Scoreboard);
     });
 
@@ -69,7 +66,7 @@ function Game({ player }: GameProps) {
     });
 
     return () => {
-      socket.emit(SOCKET_EVENTS.PLAYER_LEFT_LISTENER, key, player.ID, (cb: any) => {});
+      socket.emit(SOCKET_EVENTS.PLAYER_LEFT_LISTENER, key, player.ID, (_: any) => {});
       socket.off(SOCKET_EVENTS.ON_CHANGE_QUESTION);
       socket.off(SOCKET_EVENTS.ON_QUESTION_ENDED);
       socket.off(SOCKET_EVENTS.PLAYER_JOINED);
@@ -87,11 +84,9 @@ function Game({ player }: GameProps) {
 
   const handleAnswer = (answerID: number) => {
     socket.emit(SOCKET_EVENTS.EMIT_ANSWER_QUESTION, lobby.ID, player.ID, currentQuestion?.ID, answerID, (cb: any) => {
-      console.log(cb);
       if (cb.success) {
         showToast("Success", cb.message);
         setSelectedAnswerID(answerID);
-        // setLobby(cb.lobby);
       } else {
         showToast("Error", cb.message);
       }

@@ -1,7 +1,6 @@
 import React from "react";
 import { DragPreviewImage, useDrag, useDrop } from "react-dnd";
 import IconTrashCan from "../../../assets/svgs/IconTrashCan";
-import { handleDeleteQuestion } from "../EditLobby";
 
 interface DraggedItem {
   id: number;

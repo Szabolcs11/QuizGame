@@ -1,5 +1,3 @@
-import React from "react";
-
 function Playing() {
   return <div>Playing</div>;
 }
