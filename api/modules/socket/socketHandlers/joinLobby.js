@@ -5,8 +5,10 @@ function handleJoinLobby(socket, io) {
   socket.on("join-lobby", async (LobbyKey, PlayerID, cb) => {
     const lobby = await getLobbyFromKey(LobbyKey);
     if (!lobby) return cb({ success: false, message: responses.lobbyNotFound });
-
-    let player = await joinLobby(lobby.ID, PlayerID, 0);
+    if (lobby.LobbyOwnerID == PlayerID) {
+      return cb({ success: true, lobby, isAdmin: true });
+    }
+    let player = await joinLobby(lobby.ID, PlayerID);
     if (player == "LOBBY_PLAYING") return cb({ success: false, message: responses.lobbyPlaying });
     if (!player) return cb({ success: false, message: responses.playerNotFound });
     lobby.Players.push(player);
@@ -19,8 +21,7 @@ function handleJoinLobby(socket, io) {
     io.to(GLOBALROOM).emit("update-lobby", lobby);
 
     socket.join(LobbyKey);
-
-    cb({ success: true, lobby });
+    cb({ success: true, lobby, isAdmin: Boolean(player.IsAdmin) });
   });
 }
 

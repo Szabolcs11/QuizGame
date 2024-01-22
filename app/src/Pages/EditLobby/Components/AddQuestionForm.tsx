@@ -47,9 +47,7 @@ function AddQuestionForm({ handleAttachmentChange, handleAddQuestion, attachment
   };
   return (
     <div className="addquestioncontainer">
-      <div className="subtitle" style={{ marginTop: 8 }}>
-        Add question
-      </div>
+      <div className="subtitle">Kérdés hozzáadása</div>
       <div>
         <form onSubmit={handleSubmit(handleSubmitQuestion)} className="formcontainer">
           <Controller
@@ -116,7 +114,7 @@ function AddQuestionForm({ handleAttachmentChange, handleAddQuestion, attachment
             )}
           />
           <input type="file" ref={fileRef} onChange={handleAttachmentChange} accept=".png, .jpg, .jpeg" />
-          <input type="submit" placeholder="Kérdés hozzáadása" className="btnpr" />
+          <input type="submit" placeholder="Kérdés hozzáadása" value="Kérdés hozzáadása" className="btnpr" />
         </form>
       </div>
     </div>

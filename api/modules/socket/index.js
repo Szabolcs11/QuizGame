@@ -37,7 +37,7 @@ function initializeSocket(server) {
     leaveLobbyHandler(socket, io);
     joinLobbyHandler(socket, io);
     handleCreateLobby(socket, io);
-    joinEditLobby(socket);
+    joinEditLobby(socket, io);
     addQuestionHandler(socket);
     updateQuestionOrder(socket);
     handleDeleteQuestion(socket);

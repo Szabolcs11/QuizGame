@@ -3,17 +3,16 @@ import { ScoreboardPlayerType } from "../../../types";
 
 interface ScoreboardProps {
   scoreboard: ScoreboardPlayerType[];
-  oldScoreboard?: ScoreboardPlayerType[];
 }
 
-function Scoreboard({ oldScoreboard, scoreboard }: ScoreboardProps) {
+function Scoreboard({ scoreboard }: ScoreboardProps) {
   return (
     <div className="scoreboardcontainer">
       <div className="subtitle">Pontok</div>
       <div className="scorescontainer">
         {scoreboard.map((e) => {
           const { number } = useSpring({
-            from: { number: 0 },
+            from: { number: e.Score - e?.PointsAdded! },
             number: e.Score,
             delay: 200,
             config: { mass: 1, tension: 20, friction: 10 },

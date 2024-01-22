@@ -1,5 +1,6 @@
 import * as yup from "yup";
 import { toast } from "react-toastify";
+import { LobbyPlayerType, LobbyType } from "../types";
 
 export const authschema = yup.object().shape({
     name: yup.string().required("Ez mező kötelező!").min(3, "A mezőnek tartalmaznia kell legalább 3 karaktert"),
@@ -31,4 +32,14 @@ type ToastType = 'Success' | 'Error' | 'Warning' | 'Info';
 export const showToast = (type: ToastType, message: string) => {
     const toaster = toastTypes[type];
     toaster(message)
+}
+
+export const sortLobbyPlayersByIsAdmin = (lobby: LobbyType) => {
+    const players = lobby.Players;
+    const sortedPlayers = players.sort((a: LobbyPlayerType, b: LobbyPlayerType) => {
+        if (a.IsAdmin && !b.IsAdmin) return -1;
+        if (!a.IsAdmin && b.IsAdmin) return 1;
+        return 0;
+    })
+    return sortedPlayers;
 }

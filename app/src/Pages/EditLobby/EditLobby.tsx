@@ -2,14 +2,13 @@ import { useEffect, useState } from "react";
 import { DndProvider } from "react-dnd";
 import { HTML5Backend } from "react-dnd-html5-backend";
 import { useParams } from "react-router-dom";
-import IconUserLarge from "../../assets/svgs/IconUserLarge";
-import IconUserShield from "../../assets/svgs/IconUserShield";
+import Players from "../../components/Players";
 import { PATHS, SOCKET_EVENTS } from "../../constans";
 import { navigateto } from "../../navigation";
 import { uploadFile } from "../../services/api";
 import { socket } from "../../services/socket";
 import { AnswerType, LobbyPlayerType, LobbyType, PlayerType, QuestionType, QuestionTypes } from "../../types";
-import { showToast } from "../../utils";
+import { showToast, sortLobbyPlayersByIsAdmin } from "../../utils";
 import AddQuestionForm from "./Components/AddQuestionForm";
 import QuestionsList from "./Components/QuestionsList";
 
@@ -30,8 +29,9 @@ interface FormData {
 export let handleDeleteQuestion: (QuestionID: number) => void;
 
 function EditLobby({ playerprop }: EditLobbyProps) {
+  console.log(playerprop);
   const { key } = useParams();
-  const [player, setPlayer] = useState<LobbyPlayerType | false>(false);
+  const [player, setPlayer] = useState<LobbyPlayerType>();
   const [lobby, setLobby] = useState<LobbyType>();
   const [isLoading, setIsLoading] = useState(true);
   const [questions, setQuestions] = useState<QuestionType[]>([]);
@@ -39,9 +39,12 @@ function EditLobby({ playerprop }: EditLobbyProps) {
 
   useEffect(() => {
     socket.emit(SOCKET_EVENTS.EMIT_JOIN_EDIT_LOBBY, playerprop, key, (cb: any) => {
+      console.log(cb);
       if (cb.success) {
+        let lobby = cb.lobby as LobbyType;
+        lobby.Players = sortLobbyPlayersByIsAdmin(lobby);
         setLobby(cb.lobby as LobbyType);
-        setPlayer({ ...playerprop, IsAdmin: true });
+        setPlayer({ ...playerprop, IsAdmin: true } as LobbyPlayerType);
         setQuestions(cb.questions as QuestionType[]);
         showToast("Success", cb.message);
       } else {
@@ -103,13 +106,13 @@ function EditLobby({ playerprop }: EditLobbyProps) {
   useEffect(() => {
     const handlePlayerJoined = (player: LobbyPlayerType, lobby: LobbyType) => {
       console.log("join", player.Name);
-      console.log(lobby);
+      lobby.Players = sortLobbyPlayersByIsAdmin(lobby);
       setLobby(lobby);
     };
 
     const handlePlayerLeft = (player: LobbyPlayerType, lobby: LobbyType) => {
       console.log("left", player.Name);
-      console.log(lobby);
+      lobby.Players = sortLobbyPlayersByIsAdmin(lobby);
       setLobby(lobby);
     };
 
@@ -117,6 +120,8 @@ function EditLobby({ playerprop }: EditLobbyProps) {
     socket.on(SOCKET_EVENTS.PLAYER_LEFT_LISTENER, handlePlayerLeft);
 
     return () => {
+      console.log(playerprop);
+      socket.emit(SOCKET_EVENTS.PLAYER_LEFT_LISTENER, key, playerprop!.ID, (cb: any) => {});
       socket.off(SOCKET_EVENTS.PLAYER_JOINED, handlePlayerJoined);
       socket.off(SOCKET_EVENTS.PLAYER_LEFT_LISTENER, handlePlayerLeft);
     };
@@ -147,8 +152,11 @@ function EditLobby({ playerprop }: EditLobbyProps) {
   };
 
   const handleSartGame = () => {
+    console.log("0");
     socket.emit(SOCKET_EVENTS.EMIT_START_LOBBY, lobby?.LobbyKey, (cb: any) => {
+      console.log("1");
       if (cb.success) {
+        console.log("2");
         showToast("Success", cb.message);
         navigateto(PATHS.GAME_ADMIN + "/" + lobby?.LobbyKey);
       } else {
@@ -163,33 +171,25 @@ function EditLobby({ playerprop }: EditLobbyProps) {
 
   return (
     <div className="editlobbycontainer">
-      <div className="editlobbytitle">Edit Lobby</div>
-      <div className="leftsidecontainer">
-        <div className="playerscontainer">
-          <div className="subtitle">Játékosok:</div>
-          {lobby?.Players.map((player) => {
-            return (
-              <div key={player.ID} className="playercontainer">
-                {player.IsAdmin ? <IconUserShield /> : <IconUserLarge />}
-                <div className="playername">{player.Name}</div>
-              </div>
-            );
-          })}
-        </div>
-        <div className="startgamebuttoncontainer">
-          <div onClick={() => handleSartGame()} className="startgamebutton">
-            Játék indítása
-          </div>
+      <div className="editlobbytitle">
+        Szoba módosítása<span className="subtitle">({lobby?.Name})</span>
+      </div>
+      <div className="editlobbycontent">
+        <Players players={lobby?.Players as LobbyPlayerType[]} myid={player!.ID} />
+        <AddQuestionForm
+          handleAttachmentChange={handleAttachmentChange}
+          handleAddQuestion={handleAddQuestion}
+          attachmentUrl={attachmentUrl}
+        />
+        <DndProvider backend={HTML5Backend}>
+          <QuestionsList questions={questions} onQuestionOrderChange={handleQuestionOrderChange} />
+        </DndProvider>
+      </div>
+      <div className="startgamebuttoncontainer">
+        <div onClick={() => handleSartGame()} className="startgamebutton">
+          Játék indítása
         </div>
       </div>
-      <DndProvider backend={HTML5Backend}>
-        <QuestionsList questions={questions} onQuestionOrderChange={handleQuestionOrderChange} />
-      </DndProvider>
-      <AddQuestionForm
-        handleAttachmentChange={handleAttachmentChange}
-        handleAddQuestion={handleAddQuestion}
-        attachmentUrl={attachmentUrl}
-      />
     </div>
   );
 }

@@ -1,7 +1,4 @@
 const {
-  joinOnGoingGame,
-  getLobbyFromKey,
-  GLOBALROOM,
   getLobbyQuestions,
   getCurrentQuestion,
   getLobbyFromID,

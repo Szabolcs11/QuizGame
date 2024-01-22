@@ -101,16 +101,18 @@ async function getLobbyPlayers(LobbyID) {
   return res;
 }
 
-async function joinLobby(LobbyID, PlayerID, IsAdmin) {
+async function joinLobby(LobbyID, PlayerID) {
+  let isAdmin = 0;
   const [result] = await (await conn).query("SELECT * FROM lobbies WHERE ID=? AND Status='waiting';", [LobbyID]);
   if (result.length == 0) return "LOBBY_PLAYING";
+  if (result[0].LobbyOwnerID == PlayerID) isAdmin = 1;
   const [res] = await (
     await conn
-  ).query("INSERT INTO lobby_members (LobbyID, PlayerID, IsAdmin) VALUES (?, ?, ?);", [LobbyID, PlayerID, IsAdmin]);
+  ).query("INSERT INTO lobby_members (LobbyID, PlayerID, IsAdmin) VALUES (?, ?, ?);", [LobbyID, PlayerID, isAdmin]);
   if (res.affectedRows == 0) return false;
   const [res2] = await (await conn).query("SELECT * FROM players WHERE ID=?;", [PlayerID]);
   if (res2.length == 0) return false;
-  res2[0].IsAdmin = IsAdmin;
+  res2[0].IsAdmin = isAdmin;
   return res2[0];
 }
 
@@ -134,7 +136,9 @@ async function handlePlayerDisconnect(PlayerID) {
 
 async function createLobby(PlayerID, LobbyName) {
   const LobbyKey = generateToken(6);
-  const [res] = await (await conn).query("INSERT INTO lobbies (Name, LobbyKey) VALUES (?, ?);", [LobbyName, LobbyKey]);
+  const [res] = await (
+    await conn
+  ).query("INSERT INTO lobbies (Name, LobbyKey, LobbyOwnerID) VALUES (?, ?, ?);", [LobbyName, LobbyKey, PlayerID]);
   if (res.affectedRows == 0) return false;
   const [res2] = await (
     await conn

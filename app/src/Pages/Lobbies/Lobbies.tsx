@@ -65,6 +65,7 @@ function Lobbies({ player }: LobbiesProps) {
         Szoba létrehozása
       </div>
       <div className="lobbiescardcontainer">
+        {lobbies.length === 0 ? <div className="subtitle m-3">Nem található szoba</div> : <></>}
         {lobbies.map((lobby) => (
           <Lobby key={lobby.ID} lobby={lobby} callback={(e) => joinLobby(e)} />
         ))}

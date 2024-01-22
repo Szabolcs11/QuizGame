@@ -4,8 +4,8 @@ import { PATHS, SOCKET_EVENTS } from "../../constans";
 import { navigateto } from "../../navigation";
 import { socket } from "../../services/socket";
 import { LobbyType, PlayerAnswers, PlayerType, QuestionType, ScoreboardPlayerType } from "../../types";
-import { showToast } from "../../utils";
-import Players from "./Components/Players";
+import { showToast, sortLobbyPlayersByIsAdmin } from "../../utils";
+import Players from "./../../components/Players";
 import Question from "./Components/Question";
 import Scoreboard from "./Components/Scoreboard";
 
@@ -38,10 +38,12 @@ function Game({ player }: GameProps) {
   useEffect(() => {
     socket.on(SOCKET_EVENTS.PLAYER_JOINED, (player: PlayerType, lobby: LobbyType) => {
       console.log("join", player.Name);
+      lobby.Players = sortLobbyPlayersByIsAdmin(lobby);
       setLobby(lobby);
     });
     socket.on(SOCKET_EVENTS.PLAYER_LEFT_LISTENER, (player: PlayerType, lobby: LobbyType) => {
       console.log("left", player.Name);
+      lobby.Players = sortLobbyPlayersByIsAdmin(lobby);
       setLobby(lobby);
     });
 
@@ -98,15 +100,19 @@ function Game({ player }: GameProps) {
 
   return (
     <>
-      <Players players={lobby?.Players!} myid={player.ID} />
-      <Question
-        Question={currentQuestion!}
-        handleAnswer={(AnswerID: number) => handleAnswer(AnswerID)}
-        SelectedAnswerID={selectedAnswerID}
-        QuestionEnded={Boolean(correctAnswerID)}
-        PlayerAnswers={playerAnswers}
-        CorrectAnswerID={correctAnswerID}
-      />
+      <div className="gameconent">
+        <Question
+          Question={currentQuestion!}
+          handleAnswer={(AnswerID: number) => handleAnswer(AnswerID)}
+          SelectedAnswerID={selectedAnswerID}
+          QuestionEnded={Boolean(correctAnswerID)}
+          PlayerAnswers={playerAnswers}
+          CorrectAnswerID={correctAnswerID}
+        />
+        <div className="playerscontainer-left">
+          <Players players={lobby?.Players!} myid={player.ID} />
+        </div>
+      </div>
     </>
   );
 }

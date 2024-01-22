@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useParams } from "react-router-dom";
-import IconUserLarge from "../../assets/svgs/IconUserLarge";
-import IconUserShield from "../../assets/svgs/IconUserShield";
+import Players from "../../components/Players";
 import { PATHS, SOCKET_EVENTS } from "../../constans";
+import { navigateto } from "../../navigation";
 import { socket } from "../../services/socket";
 import { LobbyPlayerType, LobbyType, PlayerType } from "../../types";
-import { showToast } from "../../utils";
-import { navigateto } from "../../navigation";
+import { showToast, sortLobbyPlayersByIsAdmin } from "../../utils";
 
 type LobbyProps = {
   player: PlayerType;
@@ -16,11 +15,17 @@ function Lobby({ player }: LobbyProps) {
   const { key } = useParams();
 
   const [lobby, setLobby] = useState<LobbyType | null>(null);
+  let loadedRef = useRef(false);
 
   useEffect(() => {
     socket.emit(SOCKET_EVENTS.JOIN_LOBBY, key, player.ID, (cb: any) => {
       if (cb.success) {
-        setLobby(cb.lobby);
+        if (cb.isAdmin) {
+          navigateto(PATHS.LOBBY + "/" + key + "/edit");
+        } else {
+          loadedRef.current = true;
+          setLobby(cb.lobby);
+        }
       } else {
         showToast("Error", cb.message);
         navigateto(PATHS.LOBBIES);
@@ -31,13 +36,13 @@ function Lobby({ player }: LobbyProps) {
   useEffect(() => {
     const handlePlayerJoined = (player: LobbyPlayerType, lobby: LobbyType) => {
       console.log("join", player.Name);
-      console.log(lobby);
+      lobby.Players = sortLobbyPlayersByIsAdmin(lobby);
       setLobby(lobby);
     };
 
     const handlePlayerLeft = (player: LobbyPlayerType, lobby: LobbyType) => {
       console.log("left", player.Name);
-      console.log(lobby);
+      lobby.Players = sortLobbyPlayersByIsAdmin(lobby);
       setLobby(lobby);
     };
 
@@ -51,7 +56,9 @@ function Lobby({ player }: LobbyProps) {
     socket.on(SOCKET_EVENTS.ON_LOBBY_STARTED, lobbyStarted);
 
     return () => {
-      socket.emit(SOCKET_EVENTS.PLAYER_LEFT_LISTENER, key, player.ID, (cb: any) => {});
+      if (loadedRef.current) {
+        socket.emit(SOCKET_EVENTS.PLAYER_LEFT_LISTENER, key, player.ID, (cb: any) => {});
+      }
 
       socket.off(SOCKET_EVENTS.PLAYER_JOINED, handlePlayerJoined);
       socket.off(SOCKET_EVENTS.PLAYER_LEFT_LISTENER, handlePlayerLeft);
@@ -66,17 +73,7 @@ function Lobby({ player }: LobbyProps) {
   return (
     <div className="lobbycontainer">
       <div className="lobbytitle">{lobby?.Name}</div>
-      <div className="playerscontainer">
-        <div className="subtitle">Játékosok:</div>
-        {lobby?.Players.map((player) => {
-          return (
-            <div key={player.ID} className="playercontainer">
-              {player.IsAdmin ? <IconUserShield /> : <IconUserLarge />}
-              <div className="playername">{player.Name}</div>
-            </div>
-          );
-        })}
-      </div>
+      <Players players={lobby.Players} myid={player.ID} />
     </div>
   );
 }

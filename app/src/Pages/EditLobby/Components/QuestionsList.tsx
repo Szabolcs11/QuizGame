@@ -32,7 +32,7 @@ const QuestionsList: React.FC<QuestionsListProps> = ({ questions, onQuestionOrde
 
   return (
     <div className="questionscontainer">
-      <div className="subtitle">Questions:</div>
+      <div className="subtitle">Kérdések:</div>
       {orderedQuestions.map((question, index) => {
         return (
           <DraggableQuestion

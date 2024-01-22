@@ -25,6 +25,7 @@ function handlejoinOnGoingGame(socket, io) {
     });
     newLobby.CurrentQuestion = CurrentQuestion;
 
+    console.log(newLobby);
     socket.player = newLobby.Players.find((e) => e.ID == PlayerID);
     socket.lobby = newLobby;
 

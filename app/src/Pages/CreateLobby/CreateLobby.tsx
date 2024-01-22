@@ -37,7 +37,7 @@ function CreateLobby({ player }: CreateLobbyProps) {
 
   return (
     <div className="createlobbycontainer">
-      <div className="createlobbytitle">CreateLobby</div>
+      <div className="createlobbytitle">Szoba létrehozása</div>
       <form onSubmit={handleSubmit(handleCreateLobby)} className="createlobbycontent">
         <Controller
           name="name"
@@ -49,12 +49,12 @@ function CreateLobby({ player }: CreateLobbyProps) {
               autoComplete="off"
               type="text"
               className="createlobbynameinput"
-              placeholder="Lobby name"
+              placeholder="Szoba neve"
             />
           )}
         />
         {errors.name?.message != undefined ? <p className="error">{errors.name?.message}</p> : <></>}
-        <input type="submit" value="Create" className="createlobbybtn" />
+        <input type="submit" value="Létrehozás" className="createlobbybtn" />
       </form>
     </div>
   );

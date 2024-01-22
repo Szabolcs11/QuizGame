@@ -4,8 +4,8 @@ import { PATHS, SOCKET_EVENTS } from "../../constans";
 import { navigateto } from "../../navigation";
 import { socket } from "../../services/socket";
 import { LobbyPlayerType, LobbyType, PlayerType, QuestionType } from "../../types";
-import { showToast } from "../../utils";
-import Players from "../Game/Components/Players";
+import { showToast, sortLobbyPlayersByIsAdmin } from "../../utils";
+import Players from "./../../components/Players";
 import Controls from "./Components/Controls";
 import Questions from "./Components/Questions";
 
@@ -58,13 +58,13 @@ function GameAdmin({ player }: GameAdminProps) {
   useEffect(() => {
     const handlePlayerJoined = (player: LobbyPlayerType, lobby: LobbyType) => {
       console.log("join", player.Name);
-      console.log(lobby.Players);
+      lobby.Players = sortLobbyPlayersByIsAdmin(lobby);
       setPlayers(lobby.Players);
     };
 
     const handlePlayerLeft = (player: LobbyPlayerType, lobby: LobbyType) => {
       console.log("left", player.Name);
-      console.log(lobby.Players);
+      lobby.Players = sortLobbyPlayersByIsAdmin(lobby);
       setPlayers(lobby.Players);
     };
 
@@ -130,8 +130,7 @@ function GameAdmin({ player }: GameAdminProps) {
   }
 
   return (
-    <div>
-      <p>GameAdmin</p>
+    <div className="gameadmin-content">
       <Players players={players!} myid={player.ID} />
       <Questions Questions={questions} CurrentQuestionID={lobby!.CurrentQuestion.ID} Answers={answers} />
       <Controls
