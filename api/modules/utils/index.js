@@ -412,7 +412,7 @@ async function resetLobby(LobbyID) {
   await Promise.all(
     lobbyquestions.map(async (e) => {
       await deleteQuestionPlayerAnswers(e.ID);
-      await updateQuestionStatus(e.ID, "waiting");
+      await updateQuestionStatus(e.ID, "unanswered");
     })
   );
   await deleteScoreboard(LobbyID);
