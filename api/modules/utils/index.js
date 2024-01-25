@@ -392,6 +392,33 @@ async function getScoreboard(LobbyID) {
   if (res.length == 0) return false;
   return res;
 }
+
+async function deleteQuestionPlayerAnswers(QuestionID) {
+  const [res] = await (await conn).query("DELETE FROM players_answers WHERE QuestionID=?;", [QuestionID]);
+  if (res.affectedRows == 0) return false;
+  return true;
+}
+
+async function deleteScoreboard(LobbyID) {
+  const [res] = await (await conn).query("DELETE FROM scores WHERE LobbyID=?;", [LobbyID]);
+  if (res.affectedRows == 0) return false;
+  return true;
+}
+
+async function resetLobby(LobbyID) {
+  changeLobbyStatus(LobbyID, "waiting");
+  let lobbyquestions = await getLobbyQuestions(LobbyID);
+  if (!lobbyquestions) return false;
+  await Promise.all(
+    lobbyquestions.map(async (e) => {
+      await deleteQuestionPlayerAnswers(e.ID);
+      await updateQuestionStatus(e.ID, "waiting");
+    })
+  );
+  await deleteScoreboard(LobbyID);
+  return true;
+}
+
 module.exports = {
   returnError,
   getUserByToken,
@@ -421,4 +448,5 @@ module.exports = {
   calculatePoints,
   createScoreboard,
   getScoreboard,
+  resetLobby,
 };

@@ -8,6 +8,8 @@ import { showToast, sortLobbyPlayersByIsAdmin } from "../../utils";
 import Players from "./../../components/Players";
 import Question from "./Components/Question";
 import Scoreboard from "./Components/Scoreboard";
+import Podium from "../../components/Podium";
+import LeaveLobbyBtn from "../../components/LeaveLobbyBtn";
 
 type GameProps = {
   player: PlayerType;
@@ -21,6 +23,7 @@ function Game({ player }: GameProps) {
   const [playerAnswers, setPlayerAnswers] = useState<PlayerAnswers[]>([]);
   const [selectedAnswerID, setSelectedAnswerID] = useState<number>(0);
   const [scoreboard, setScoreboard] = useState<ScoreboardPlayerType[]>([]);
+  const [podiumData, setPodiumData] = useState<ScoreboardPlayerType[]>([]);
 
   useEffect(() => {
     socket.emit(SOCKET_EVENTS.EMIT_JOIN_GAME, player.ID, key, (cb: any) => {
@@ -65,17 +68,37 @@ function Game({ player }: GameProps) {
       setPlayerAnswers(PlayerAnswers);
     });
 
+    socket.on(SOCKET_EVENTS.ON_FINISH_GAME, (Scoreboard: ScoreboardPlayerType[]) => {
+      setPodiumData(Scoreboard);
+    });
+
+    socket.on(SOCKET_EVENTS.ON_GAME_RESET, (data: any) => {
+      navigateto(PATHS.LOBBY + "/" + data.LobbyKey);
+    });
+
     return () => {
       socket.emit(SOCKET_EVENTS.PLAYER_LEFT_LISTENER, key, player.ID, (_: any) => {});
       socket.off(SOCKET_EVENTS.ON_CHANGE_QUESTION);
       socket.off(SOCKET_EVENTS.ON_QUESTION_ENDED);
       socket.off(SOCKET_EVENTS.PLAYER_JOINED);
       socket.off(SOCKET_EVENTS.PLAYER_LEFT_LISTENER);
+      socket.off(SOCKET_EVENTS.ON_SHOW_SCOREBOARD);
+      socket.off(SOCKET_EVENTS.ON_FINISH_GAME);
+      socket.off(SOCKET_EVENTS.ON_GAME_RESET);
     };
   }, [socket]);
 
   if (!lobby) {
     return <div>Loading...</div>;
+  }
+
+  if (podiumData.length > 0) {
+    return (
+      <div>
+        <LeaveLobbyBtn />
+        <Podium data={podiumData} />
+      </div>
+    );
   }
 
   if (scoreboard.length > 0) {

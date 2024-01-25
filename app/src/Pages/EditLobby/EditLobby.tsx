@@ -11,6 +11,7 @@ import { AnswerType, LobbyPlayerType, LobbyType, PlayerType, QuestionType, Quest
 import { showToast, sortLobbyPlayersByIsAdmin } from "../../utils";
 import AddQuestionForm from "./Components/AddQuestionForm";
 import QuestionsList from "./Components/QuestionsList";
+import LeaveLobbyBtn from "../../components/LeaveLobbyBtn";
 
 type EditLobbyProps = {
   playerprop: PlayerType;
@@ -175,6 +176,7 @@ function EditLobby({ playerprop }: EditLobbyProps) {
 
   return (
     <div className="editlobbycontainer">
+      <LeaveLobbyBtn />
       <div className="editlobbytitle">
         Szoba módosítása<span className="subtitle">({lobby?.Name})</span>
       </div>

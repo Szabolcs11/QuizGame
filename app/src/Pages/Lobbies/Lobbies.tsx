@@ -2,10 +2,9 @@ import { useEffect, useState } from "react";
 import { PATHS, SOCKET_EVENTS } from "../../constans";
 import { navigateto } from "../../navigation";
 import { getLobbies } from "../../services/api";
+import { socket } from "../../services/socket";
 import { LobbyType, PlayerType } from "../../types";
 import Lobby from "./Components/Lobby";
-import { socket } from "../../services/socket";
-import Podium from "../../components/Podium";
 
 type LobbiesProps = {
   player: PlayerType;
@@ -70,7 +69,6 @@ function Lobbies({ player }: LobbiesProps) {
           <Lobby key={lobby.ID} lobby={lobby} callback={(e) => joinLobby(e)} />
         ))}
       </div>
-      <Podium />
     </div>
   );
 }

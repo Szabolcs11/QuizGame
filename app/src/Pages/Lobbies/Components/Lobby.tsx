@@ -1,4 +1,5 @@
 import { LobbyPreviewType } from "../../../types";
+import Finished from "./Finished";
 import Playing from "./Playing";
 import Waiting from "./Waiting";
 
@@ -10,6 +11,7 @@ type LobbyProps = {
 let statuses = {
   waiting: Waiting,
   playing: Playing,
+  finished: Finished,
 };
 
 function Lobby({ lobby, callback }: LobbyProps) {

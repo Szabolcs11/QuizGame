@@ -456,7 +456,11 @@ body {
 
 .controls {
     display: flex;
+    justify-content: center;
+    gap: 12px;
     align-items: center;
+    flex-wrap: wrap;
+    max-width: 350px;
     /* background-color: #fff;
     width: 150px;
     height: 50px;
@@ -476,7 +480,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    margin: 0 8px;
+    /* margin: 0 8px; */
 }
 
 .playeranswerscontainer {
@@ -571,6 +575,10 @@ body {
         flex-direction: column !important;
         gap: 24px;
     }
+    .leavelobbybtncontainer {
+        left: 4px!important;
+        top: 4px!important;
+    }
 
 }
 
@@ -600,7 +608,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: yellow;
+    flex-direction: column;
 }
 
 .podiumcontent {
@@ -614,9 +622,20 @@ body {
     width: 100px;
     margin: 10px;
     border-radius: 8px;
-    background-color: red;
     position: absolute;
     bottom: 0;
+}
+
+.gold {
+    background-color: #FFD166;
+}
+
+.silver {
+    background-color: #C0C0C0;
+}
+
+.bronze {
+    background-color: #CD7F32;
 }
 
 .left {
@@ -644,4 +663,51 @@ body {
     right: 0;
     margin-left: auto;
     margin-right: auto;
+}
+
+.podiumscores {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 32px;
+}
+
+.podiumscore {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 12px;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    font-weight: 600;
+    font-family: "monospace";
+    width: 400px;
+    background-color: #DED8ED;
+    border-radius: 8px;
+}
+
+.podiumsubtitle {
+    text-align: center;
+    font-size: 1.2rem;
+}
+
+.leavelobbybtncontainer {
+    position: absolute;
+    left: 42px;
+    top: 42px;
+    background-color: #DF2E38;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.leavelobbybtntext {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: #fff;
 }

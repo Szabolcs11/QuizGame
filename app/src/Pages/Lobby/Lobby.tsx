@@ -6,6 +6,7 @@ import { navigateto } from "../../navigation";
 import { socket } from "../../services/socket";
 import { LobbyPlayerType, LobbyType, PlayerType } from "../../types";
 import { showToast, sortLobbyPlayersByIsAdmin } from "../../utils";
+import LeaveLobbyBtn from "../../components/LeaveLobbyBtn";
 
 type LobbyProps = {
   player: PlayerType;
@@ -71,6 +72,7 @@ function Lobby({ player }: LobbyProps) {
 
   return (
     <div className="lobbycontainer">
+      <LeaveLobbyBtn />
       <div className="lobbytitle">{lobby?.Name}</div>
       <Players players={lobby.Players} myid={player.ID} />
     </div>

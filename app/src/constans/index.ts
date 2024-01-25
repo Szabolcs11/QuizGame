@@ -38,5 +38,9 @@ export const SOCKET_EVENTS = {
     EMIT_END_QUESTION: 'end-question',
     ON_QUESTION_ENDED: 'question-ended',
     EMIT_SHOW_SCOREBOARD: 'show-scoreboard',
-    ON_SHOW_SCOREBOARD: 'show-scoreboard'
+    ON_SHOW_SCOREBOARD: 'show-scoreboard',
+    EMIT_FINISH_GAME: 'finish-game',
+    ON_FINISH_GAME: 'finish-game',
+    EMIT_RESET_GAME: 'reset-game',
+    ON_GAME_RESET: 'game-reseted',
 };

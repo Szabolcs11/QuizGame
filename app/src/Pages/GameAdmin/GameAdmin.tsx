@@ -3,11 +3,13 @@ import { useParams } from "react-router-dom";
 import { PATHS, SOCKET_EVENTS } from "../../constans";
 import { navigateto } from "../../navigation";
 import { socket } from "../../services/socket";
-import { LobbyPlayerType, LobbyType, PlayerType, QuestionType } from "../../types";
+import { LobbyPlayerType, LobbyType, PlayerType, QuestionType, ScoreboardPlayerType } from "../../types";
 import { showToast, sortLobbyPlayersByIsAdmin } from "../../utils";
 import Players from "./../../components/Players";
 import Controls from "./Components/Controls";
 import Questions from "./Components/Questions";
+import Podium from "../../components/Podium";
+import LeaveLobbyBtn from "../../components/LeaveLobbyBtn";
 
 type GameAdminProps = {
   player: PlayerType;
@@ -33,6 +35,7 @@ function GameAdmin({ player }: GameAdminProps) {
   const [answers, setAnswers] = useState<AnswersType[]>([]);
   const [players, setPlayers] = useState<LobbyPlayerType[]>([]);
   const [pointsScored, setPointsScored] = useState<PointsScored[]>([]);
+  const [podiumData, setPodiumData] = useState<ScoreboardPlayerType[]>([]);
 
   const ref = useRef<LobbyPlayerType[]>();
   ref.current = players;
@@ -81,6 +84,7 @@ function GameAdmin({ player }: GameAdminProps) {
     return () => {
       socket.off(SOCKET_EVENTS.PLAYER_JOINED, handlePlayerJoined);
       socket.off(SOCKET_EVENTS.PLAYER_LEFT_LISTENER, handlePlayerLeft);
+      socket.off(SOCKET_EVENTS.ON_ANSWERED_QUESTION, handlePlayerAnsweredQuestion);
     };
   }, [socket]);
 
@@ -104,8 +108,6 @@ function GameAdmin({ player }: GameAdminProps) {
     });
   };
 
-  // End Question, mean the server is calculating the score
-  // ShowScoreboard, we put a scoreboard on the screen
   const handleNextQuestion = () => {
     socket.emit(SOCKET_EVENTS.EMIT_NEXT_QUESTION, player.ID, lobby!.ID, (cb: any) => {
       if (cb.success) {
@@ -121,11 +123,38 @@ function GameAdmin({ player }: GameAdminProps) {
   };
 
   const handleFinishGame = () => {
-    console.log("finish");
+    socket.emit(SOCKET_EVENTS.EMIT_FINISH_GAME, lobby?.ID, (cb: any) => {
+      if (cb.success) {
+        setPodiumData(cb.scoreboard);
+        showToast("Success", cb.message);
+      } else {
+        showToast("Error", cb.message);
+      }
+    });
+  };
+
+  const handleResetGame = () => {
+    socket.emit(SOCKET_EVENTS.EMIT_RESET_GAME, lobby?.ID, (cb: any) => {
+      if (cb.success) {
+        navigateto(PATHS.LOBBY + "/" + lobby?.LobbyKey);
+        showToast("Success", cb.message);
+      } else {
+        showToast("Error", cb.message);
+      }
+    });
   };
 
   if (isLoading) {
     return <div>Loading...</div>;
+  }
+
+  if (podiumData.length > 0) {
+    return (
+      <div>
+        <LeaveLobbyBtn callback={() => setPodiumData([])} />
+        <Podium data={podiumData} />
+      </div>
+    );
   }
 
   return (
@@ -137,6 +166,7 @@ function GameAdmin({ player }: GameAdminProps) {
         handleNextQuestion={() => handleNextQuestion()}
         handleShowScoreboard={() => handleShowScoreboard()}
         handleFinishGame={() => handleFinishGame()}
+        handleResetGame={() => handleResetGame()}
       />
     </div>
   );

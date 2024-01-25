@@ -25,7 +25,6 @@ function CreateLobby({ player }: CreateLobbyProps) {
 
   const handleCreateLobby = async (data: FormData) => {
     socket.emit(SOCKET_EVENTS.EMIT_CREATE_LOBBY, player.ID, data.name, (cb: any) => {
-      console.log(cb);
       if (cb.success) {
         showToast("Success", cb.message);
         navigateto(PATHS.LOBBY + "/" + cb.lobby.LobbyKey + "/edit");

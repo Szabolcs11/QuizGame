@@ -14,6 +14,8 @@ const handleAnswerQuestion = require("./socketHandlers/handleAnswerQuestion");
 const nextQuestion = require("./socketHandlers/nextQuestion");
 const endQuestion = require("./socketHandlers/endQuestion");
 const showScoreboard = require("./socketHandlers/showScoreboard");
+const finishGame = require("./socketHandlers/finishGame.JS");
+const resetGame = require("./socketHandlers/resetGame");
 
 function initializeSocket(server) {
   const io = socketIO(server, { cors: { origin: "*" } });
@@ -48,6 +50,8 @@ function initializeSocket(server) {
     nextQuestion(socket, io);
     endQuestion(socket, io);
     showScoreboard(socket, io);
+    finishGame(socket, io);
+    resetGame(socket, io);
   });
 
   return io;
